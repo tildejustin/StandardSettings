@@ -1,30 +1,27 @@
 package com.kingcontaria.standardsettings;
 
-import com.google.common.io.Files;
 import com.kingcontaria.standardsettings.mixins.accessors.LanguageManagerAccessor;
 import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccessor;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatVisibility;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.sound.SoundCategory;
 import net.minecraft.client.util.Window;
-import net.minecraft.world.Difficulty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
+import org.spongepowered.include.com.google.common.io.Files;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class StandardSettings {
 
     public static final int[] version = new int[]{1,2,2,0};
-    public static final Logger LOGGER = LogManager.getLogger();
-    private static final MinecraftClient client = MinecraftClient.getInstance();
+    public static final Logger LOGGER = Logger.getLogger("StandardSettings");
+    private static final Minecraft client = Minecraft.getMinecraft();
     public static final GameOptions options = client.options;
     public static final File standardoptionsFile = new File(FabricLoader.getInstance().getConfigDir().resolve("standardoptions.txt").toUri());
     public static boolean changeOnWindowActivation = false;
@@ -46,7 +43,7 @@ public class StandardSettings {
         try {
             if (!standardoptionsFile.exists()) {
                 standardoptionsCache = null;
-                LOGGER.error("standardoptions.txt is missing");
+                LOGGER.warning("standardoptions.txt is missing");
                 return;
             }
 
@@ -62,16 +59,17 @@ public class StandardSettings {
                 LOGGER.info("Reloading & caching StandardSettings...");
                 List<String> lines = resolveGlobalFile(standardoptionsFile);
                 if (lines == null) {
-                    LOGGER.error("standardoptions.txt is empty");
+                    LOGGER.warning("standardoptions.txt is empty");
                     return;
                 }
                 standardoptionsCache = lines.toArray(new String[0]);
             }
             load(standardoptionsCache);
-            LOGGER.info("Finished loading StandardSettings ({} ms)", (System.nanoTime() - start) / 1000000.0f);
+            LOGGER.info("Finished loading StandardSettings + (" + (System.nanoTime() - start) / 1000000.0f + " ms)");
         } catch (Exception e) {
             standardoptionsCache = null;
-            LOGGER.error("Failed to load StandardSettings", e);
+            LOGGER.warning("Failed to load StandardSettings");
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +121,7 @@ public class StandardSettings {
                     case "mouseSensitivity": options.sensitivity = Float.parseFloat(strings[1]); break;
                     case "fov": options.fov = Float.parseFloat(strings[1]) < 5 ? Float.parseFloat(strings[1]) * (defaultFOV / 70.0f * 39.0f + 1.0f) + defaultFOV : (Integer.parseInt(strings[1]) - (70.0f - defaultFOV)) / (40.0f - defaultFOV / 70.0f * 39.0f); break;
                     case "gamma": options.gamma = Float.parseFloat(strings[1]); break;
-                    case "renderDistance": options.viewDistance = Integer.parseInt(strings[1]); break;
+                    case "renderDistance": options.renderDistance = Integer.parseInt(strings[1]); break;
                     case "guiScale": options.guiScale = Integer.parseInt(strings[1]); break;
                     case "particles": options.particle = Integer.parseInt(strings[1]); break;
                     case "bobView": options.bobView = Boolean.parseBoolean(strings[1]); break;
