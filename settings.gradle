@@ -9,5 +9,9 @@ pluginManagement {
 			name = 'Jitpack'
 			url = 'https://jitpack.io'
 		}
+		maven {
+			name = "legacy-fabric"
+			url = "https://maven.legacyfabric.net"
+		}
 	}
 }

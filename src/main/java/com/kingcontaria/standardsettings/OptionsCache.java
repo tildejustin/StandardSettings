@@ -48,10 +48,6 @@ public class OptionsCache {
     public int perspective;
     public boolean hudHidden;
     public String piedirectory;
-//    public boolean field_953;
-//    public boolean field_955;
-//    public float field_956;
-//    public float field_957;
 
     public OptionsCache(Minecraft client) {
         this.client = client;
@@ -63,6 +59,7 @@ public class OptionsCache {
         musicVolume = options.musicVolume;
         soundVolume = options.soundVolume;
         invertYMouse = options.invertYMouse;
+        sensitivity = options.sensitivity;
         fov = options.fov;
         gamma = options.gamma;
         renderDistance = options.renderDistance;
@@ -104,6 +101,25 @@ public class OptionsCache {
         if (!levelName.equals(this.levelName)) {
             return;
         }
+        options.musicVolume = musicVolume;
+        options.soundVolume = soundVolume;
+        options.invertYMouse = invertYMouse;
+        options.sensitivity = sensitivity;
+        options.fov = fov;
+        options.gamma = gamma;
+        options.renderDistance = renderDistance;
+        options.guiScale = guiScale;
+        options.particle = particle;
+        options.bobView = bobView;
+        options.anaglyph3d = anaglyph3d;
+        options.advancedOpengl = advancedOpengl;
+        options.maxFramerate = maxFramerate;
+        options.difficultyLevel = difficultyLevel;
+        options.fancyGraphics = fancyGraphics;
+        options.ambientOcculsion = ambientOcculsion;
+        options.renderClouds = renderClouds;
+        options.currentTexturePackName = currentTexturePackName;
+        options.lastServer = lastServer;
         options.language = language;
         options.chatVisibility = chatVisibility;
         options.chatColor = chatColor;
