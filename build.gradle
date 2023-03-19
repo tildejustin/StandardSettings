@@ -7,11 +7,15 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "${project.archives_base_name}-${project.minecraft_version}"
-version = project.mod_version
+archivesBaseName = project.archives_base_name
+version = "${project.mod_version}-${project.minecraft_version}"
 group = project.maven_group
 
-
+repositories {
+	flatDir {
+		dirs("libs")
+	}
+}
 
 loom {
 	setIntermediaryUrl('https://maven.legacyfabric.net/net/fabricmc/intermediary/%1$s/intermediary-%1$s-v2.jar')
@@ -21,7 +25,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.legacyfabric:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation files("libs/no-paus-1.3.2-0.0.1.jar")
+	modImplementation(name: "no-paus-1.3.2-0.0.2")
 }
 
 processResources {
