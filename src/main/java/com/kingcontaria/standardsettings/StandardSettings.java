@@ -1,18 +1,15 @@
 package com.kingcontaria.standardsettings;
 
-import com.kingcontaria.standardsettings.mixins.MinecraftClientMixin;
-import com.kingcontaria.standardsettings.mixins.accessors.LanguageManagerAccessor;
 import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.VideoOptionsScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.Language;
 import org.lwjgl.opengl.Display;
 import org.spongepowered.include.com.google.common.io.Files;
+import xyz.tildejustin.nopaus.NoPaus;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +34,7 @@ public class StandardSettings {
     public static String[] standardoptionsCache;
     public static Map<File, Long> filesLastModifiedMap;
     public static float defaultFOV;
+    public static boolean HAS_NO_PAUS;
 
     public static void load() {
         long start = System.nanoTime();
@@ -192,6 +190,9 @@ public class StandardSettings {
                     case "renderDistanceOnWorldJoin" ->
                             renderDistanceOnWorldJoin = Optional.of(Integer.parseInt(strings[1]));
                     case "changeOnResize" -> changeOnResize = Boolean.parseBoolean(strings[1]);
+                    case "pauseOnLostFocus" -> {
+                        if (HAS_NO_PAUS) NoPaus.pauseOnLostFocus = Boolean.parseBoolean(strings[1]);
+                    }
                 }
                 // Some options.txt settings which aren't accessible in vanilla Minecraft and some unnecessary settings (like Multiplayer and Streaming stuff) are not included.
                 // also has a few extra settings that can be reset that Minecraft doesn't save to options.txt, but are important in speedrunning
@@ -328,6 +329,10 @@ public class StandardSettings {
                 "enableVsync:" + options.vsync + l +
                 "hideServerAddress:" + options.hideServerAddress + l
         );
+
+        if (HAS_NO_PAUS) {
+            string.append("pauseOnLostFocus:").append(NoPaus.pauseOnLostFocus).append(l);
+        }
 
         for (KeyBinding keyBinding : options.allKeys) {
             string.append("key_").append(keyBinding.translationKey).append(":").append(keyBinding.code).append(l);

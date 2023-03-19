@@ -2,7 +2,6 @@ package com.kingcontaria.standardsettings.mixins;
 
 import com.kingcontaria.standardsettings.StandardSettings;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.Version;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.LevelInfo;
 import org.lwjgl.opengl.Display;
@@ -18,7 +17,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Mixin(Minecraft.class)
@@ -29,8 +31,7 @@ public class MinecraftClientMixin {
     // initialize StandardSettings, doesn't use ClientModInitializer because GameOptions need to be initialized first
     @Inject(method = "initializeGame", at = @At("RETURN"))
     private void initializeStandardSettings(CallbackInfo ci) {
-        // determine the internal default FOV for compatibility with all 1.7.x versions
-        // before 1.7.6-pre1 FOV was saved as a value from 0.0 to 1.0, after that as 30.0 to 110.0
+        StandardSettings.HAS_NO_PAUS = FabricLoader.getInstance().isModLoaded("no-paus");
         try {
             StandardSettings.defaultFOV = 0.0f;
         } catch (Exception e) {

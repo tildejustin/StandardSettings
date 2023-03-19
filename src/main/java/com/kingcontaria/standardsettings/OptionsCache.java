@@ -4,10 +4,7 @@ import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccesso
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import org.lwjgl.opengl.Display;
-
-import java.io.File;
+import xyz.tildejustin.nopaus.NoPaus;
 
 public class OptionsCache {
 
@@ -48,6 +45,7 @@ public class OptionsCache {
     public int perspective;
     public boolean hudHidden;
     public String piedirectory;
+    public boolean pauseOnLostFocus;
 
     public OptionsCache(Minecraft client) {
         this.client = client;
@@ -93,6 +91,9 @@ public class OptionsCache {
         perspective = options.perspective;
         hudHidden = options.hudHidden;
         piedirectory = ((MinecraftClientAccessor)client).getOpenProfilerSection();
+        if (StandardSettings.HAS_NO_PAUS) {
+            pauseOnLostFocus = NoPaus.pauseOnLostFocus;
+        }
         this.levelName = levelName;
         StandardSettings.LOGGER.info("Cached options for '" + this.levelName + "'" + (this.levelName != null ? " & abandoned old cache" : ""));
     }
@@ -138,6 +139,9 @@ public class OptionsCache {
         options.perspective = perspective;
         options.hudHidden = hudHidden;
         ((MinecraftClientAccessor)client).setOpenProfilerSection(piedirectory);
+        if (StandardSettings.HAS_NO_PAUS) {
+            NoPaus.pauseOnLostFocus = pauseOnLostFocus;
+        }
         StandardSettings.LOGGER.info("Restored cached options for '" + this.levelName + "'");
         this.levelName = null;
     }
