@@ -25,7 +25,6 @@ public class StandardSettings {
     public static final GameOptions options = client.options;
     public static final File standardoptionsFile = new File(FabricLoader.getInstance().getConfigDir().resolve("standardoptions.txt").toUri());
     public static boolean changeOnWindowActivation = false;
-    public static boolean changeOnResize = false;
     private static Optional<Integer> renderDistanceOnWorldJoin = Optional.empty();
     private static Optional<Float> fovOnWorldJoin = Optional.empty();
     private static Optional<Integer> guiScaleOnWorldJoin = Optional.empty();
@@ -118,48 +117,51 @@ public class StandardSettings {
                 String[] string0_split = strings[0].split("_", 2);
 
                 switch (string0_split[0]) {
-                    case "music" -> options.musicVolume = Float.parseFloat(strings[1]);
-                    case "sound" -> options.soundVolume = Float.parseFloat(strings[1]);
-                    case "invertYMouse" -> options.invertYMouse = Boolean.parseBoolean(strings[1]);
-                    case "mouseSensitivity" -> options.sensitivity = Float.parseFloat(strings[1]);
-                    case "fov" -> options.fov = Float.parseFloat(strings[1]);
-                    case "gamma" -> options.gamma = Float.parseFloat(strings[1]);
-                    case "viewDistance" -> options.renderDistance = Integer.parseInt(strings[1]);
-                    case "guiScale" -> {
+                    case "music": options.musicVolume = Float.parseFloat(strings[1]); break;
+                    case "sound": options.soundVolume = Float.parseFloat(strings[1]); break;
+                    case "invertYMouse": options.invertYMouse = Boolean.parseBoolean(strings[1]); break;
+                    case "mouseSensitivity": options.sensitivity = Float.parseFloat(strings[1]); break;
+                    case "fov": options.fov = Float.parseFloat(strings[1]); break;
+                    case "gamma": options.gamma = Float.parseFloat(strings[1]); break;
+                    case "viewDistance": options.renderDistance = Integer.parseInt(strings[1]); break;
+                    case "guiScale": {
                         options.guiScale = Integer.parseInt(strings[1]);
                         Window window = new Window(Minecraft.getMinecraft().options, Minecraft.getMinecraft().width, Minecraft.getMinecraft().height);
                         int n2 = window.getWidth();
                         int n3 = window.getHeight();
                         Minecraft.getMinecraft().currentScreen.method_1028(Minecraft.getMinecraft(), n2, n3);
+                        break;
                     }
-                    case "particles" -> options.particle = Integer.parseInt(strings[1]);
-                    case "bobView" -> options.bobView = Boolean.parseBoolean(strings[1]);
-                    case "anaglyph3d" -> {
+                    case "particles": options.particle = Integer.parseInt(strings[1]); break;
+                    case "bobView": options.bobView = Boolean.parseBoolean(strings[1]); break;
+                    case "anaglyph3d": {
                         options.anaglyph3d = Boolean.parseBoolean(strings[1]);
                         Minecraft.getMinecraft().textureManager.updateAnaglyph3D();
+                        break;
                     }
-                    case "advancedOpengl" -> options.advancedOpengl = Boolean.parseBoolean(strings[1]);
-                    case "fpsLimit" -> options.maxFramerate = Integer.parseInt(strings[1]);
-                    case "difficulty" -> options.difficultyLevel = Integer.parseInt(strings[1]);
-                    case "fancyGraphics" -> options.fancyGraphics = Boolean.parseBoolean(strings[1]);
-                    case "ao" -> options.ambientOcculsion = Boolean.parseBoolean(strings[1]);
-                    case "clouds" -> options.renderClouds = Boolean.parseBoolean(strings[1]);
-                    case "skin" -> options.currentTexturePackName = strings[1];
-                    case "lastServer" -> options.lastServer = strings[1];
-                    case "lang" -> {
+                    case "advancedOpengl": options.advancedOpengl = Boolean.parseBoolean(strings[1]); break;
+                    case "fpsLimit": options.maxFramerate = Integer.parseInt(strings[1]); break;
+                    case "difficulty": options.difficultyLevel = Integer.parseInt(strings[1]); break;
+                    case "fancyGraphics": options.fancyGraphics = Boolean.parseBoolean(strings[1]); break;
+                    case "ao": options.ambientOcculsion = Boolean.parseBoolean(strings[1]); break;
+                    case "clouds": options.renderClouds = Boolean.parseBoolean(strings[1]); break;
+                    case "skin": options.currentTexturePackName = strings[1]; break;
+                    case "lastServer": options.lastServer = strings[1]; break;
+                    case "lang": {
                         options.language = strings[1];
                         Language.getInstance().setCode(options.language);
                         Minecraft.getMinecraft().textRenderer.setUnicode(Language.getInstance().method_638());
                         Minecraft.getMinecraft().textRenderer.setRightToLeft(Language.hasSpecialCharacters(options.language));
+                        break;
                     }
-                    case "chatVisibility" -> options.chatVisibility = Integer.parseInt(strings[1]);
-                    case "chatColors" -> options.chatColor = Boolean.parseBoolean(strings[1]);
-                    case "chatLinks" -> options.chatLink = Boolean.parseBoolean(strings[1]);
-                    case "chatLinksPrompt" -> options.chatLinkPrompt = Boolean.parseBoolean(strings[1]);
-                    case "chatOpacity" -> options.chatOpacity = Float.parseFloat(strings[1]);
-                    case "serverTextures" -> options.useServerTextures = Boolean.parseBoolean(strings[1]);
-                    case "snooperEnabled" -> options.snopperEnabled = Boolean.parseBoolean(strings[1]);
-                    case "fullscreen" -> {
+                    case "chatVisibility": options.chatVisibility = Integer.parseInt(strings[1]); break;
+                    case "chatColors": options.chatColor = Boolean.parseBoolean(strings[1]); break;
+                    case "chatLinks": options.chatLink = Boolean.parseBoolean(strings[1]); break;
+                    case "chatLinksPrompt": options.chatLinkPrompt = Boolean.parseBoolean(strings[1]); break;
+                    case "chatOpacity": options.chatOpacity = Float.parseFloat(strings[1]); break;
+                    case "serverTextures": options.useServerTextures = Boolean.parseBoolean(strings[1]); break;
+                    case "snooperEnabled": options.snopperEnabled = Boolean.parseBoolean(strings[1]); break;
+                    case "fullscreen": {
                         if (options.fullscreen != Boolean.parseBoolean(strings[1])) {
                             if (Display.isActive()) {
                                 client.toggleFullscreen();
@@ -168,30 +170,33 @@ public class StandardSettings {
                                 LOGGER.warning("Could not reset fullscreen mode because window wasn't focused!");
                             }
                         }
+                        break;
                     }
-                    case "enableVsync" -> Display.setVSyncEnabled(options.vsync = Boolean.parseBoolean(strings[1]));
-                    case "key" -> {
+                    case "enableVsync": Display.setVSyncEnabled(options.vsync = Boolean.parseBoolean(strings[1])); break;
+                    case "key": {
                         for (KeyBinding keyBinding : options.allKeys) {
                             if (string0_split[1].equals(keyBinding.translationKey)) {
                                 keyBinding.code = Integer.parseInt(strings[1]);
                                 break;
                             }
                         }
+                        break;
                     }
-                    case "perspective" -> options.perspective = Integer.parseInt(strings[1]) % 3;
-                    case "piedirectory" -> {
+                    case "perspective": options.perspective = Integer.parseInt(strings[1]) % 3; break;
+                    case "piedirectory": {
                         if (!strings[1].split("\\.")[0].equals("root")) break;
                         ((MinecraftClientAccessor) client).setOpenProfilerSection(strings[1]);
+                        break;
                     }
-                    case "f1" -> options.hudHidden = Boolean.parseBoolean(strings[1]);
-                    case "fovOnWorldJoin" ->
-                            fovOnWorldJoin = Optional.of(Float.parseFloat(strings[1]) < 5 ? Float.parseFloat(strings[1]) * (defaultFOV / 7 * 4) + defaultFOV : (Integer.parseInt(strings[1]) - (70.0f - defaultFOV)) / (40.0f - defaultFOV / 70.0f * 39.0f));
-                    case "guiScaleOnWorldJoin" -> guiScaleOnWorldJoin = Optional.of(Integer.parseInt(strings[1]));
-                    case "renderDistanceOnWorldJoin" ->
-                            renderDistanceOnWorldJoin = Optional.of(Integer.parseInt(strings[1]));
-                    case "changeOnResize" -> changeOnResize = Boolean.parseBoolean(strings[1]);
-                    case "pauseOnLostFocus" -> {
+                    case "f1": options.hudHidden = Boolean.parseBoolean(strings[1]); break;
+                    case "fovOnWorldJoin":
+                            fovOnWorldJoin = Optional.of(Float.parseFloat(strings[1]) < 5 ? Float.parseFloat(strings[1]) * (defaultFOV / 7 * 4) + defaultFOV : (Integer.parseInt(strings[1]) - (70.0f - defaultFOV)) / (40.0f - defaultFOV / 70.0f * 39.0f)); break;
+                    case "guiScaleOnWorldJoin": guiScaleOnWorldJoin = Optional.of(Integer.parseInt(strings[1])); break;
+                    case "renderDistanceOnWorldJoin":
+                            renderDistanceOnWorldJoin = Optional.of(Integer.parseInt(strings[1])); break;
+                    case "pauseOnLostFocus": {
                         if (HAS_NO_PAUS) NoPaus.pauseOnLostFocus = Boolean.parseBoolean(strings[1]);
+                        break;
                     }
                 }
                 // Some options.txt settings which aren't accessible in vanilla Minecraft and some unnecessary settings (like Multiplayer and Streaming stuff) are not included.
@@ -229,7 +234,6 @@ public class StandardSettings {
         fovOnWorldJoin = Optional.empty();
         guiScaleOnWorldJoin = Optional.empty();
         renderDistanceOnWorldJoin = Optional.empty();
-        changeOnResize = false;
         changeOnWindowActivation = false;
     }
 
@@ -338,7 +342,7 @@ public class StandardSettings {
             string.append("key_").append(keyBinding.translationKey).append(":").append(keyBinding.code).append(l);
         }
 
-        string.append("perspective:").append(l).append("piedirectory:").append(l).append("f1:").append(l).append("fovOnWorldJoin:").append(l).append("guiScaleOnWorldJoin:").append(l).append("renderDistanceOnWorldJoin:").append(l).append("changeOnResize:false");
+        string.append("perspective:").append(l).append("piedirectory:").append(l).append("f1:").append(l).append("fovOnWorldJoin:").append(l).append("guiScaleOnWorldJoin:").append(l).append("renderDistanceOnWorldJoin:");
 
         return string.toString();
     }
@@ -361,12 +365,11 @@ public class StandardSettings {
         {
             // add lines added in the pre-releases of StandardSettings v1.2.1
             if (compareVersions(fileVersion, new int[]{1, 2, 1, -1000})) {
-                if (existingLines != null && (existingLines.contains("entityCulling") || existingLines.contains("f1") || existingLines.contains("guiScaleOnWorldJoin") || existingLines.contains("changeOnResize"))) {
+                if (existingLines != null && (existingLines.contains("entityCulling") || existingLines.contains("f1") || existingLines.contains("guiScaleOnWorldJoin"))) {
                     break checking;
                 }
                 lines.add("f1:");
                 lines.add("guiScaleOnWorldJoin:");
-                lines.add("changeOnResize:false");
             }
         }
 
