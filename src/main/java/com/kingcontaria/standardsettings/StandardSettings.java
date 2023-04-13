@@ -244,7 +244,7 @@ public class StandardSettings {
         options.sensitivity = check("Sensitivity", options.sensitivity * 2, 0, 2, true) / 2;
         options.fov = check("FOV", options.fov, 0.0f, 1.0f, false);
 //        gamma 1 is vanilla
-        options.gamma = check("Brightness", options.gamma, 0, 1, true);
+        options.gamma = check("Brightness", options.gamma, 0, 5, true);
         options.renderDistance = check("Render Distance", options.renderDistance, 0, 3);
         options.guiScale = check("GUI Scale", options.guiScale, 0, 3);
         options.maxFramerate = check("Max Framerate", options.maxFramerate, 1, 260);
