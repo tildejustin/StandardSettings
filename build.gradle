@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -24,6 +24,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	compileOnlyApi files('libs/sodium-1.16.1-backport-fabric-0.2.1+build.10.jar')
+	compileOnlyApi files('libs/worldpreview-1.16.1-4.0.0.jar')
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 
