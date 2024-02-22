@@ -169,7 +169,7 @@ public class StandardSettings {
                     case "maxFps" -> options.getMaxFps().setValue(Integer.parseInt(strings[1]));
                     case "graphicsMode" -> options.getGraphicsMode().setValue(GraphicsMode.byId(Integer.parseInt(strings[1])));
                     case "ao" -> options.getAo().setValue(AoMode.byId(Integer.parseInt(strings[1])));
-                    case "renderClouds" -> options.getCloudRenderMod().setValue(strings[1].equals("\"true\"") ? CloudRenderMode.FANCY : strings[1].equals("\"false\"") ? CloudRenderMode.OFF : CloudRenderMode.FAST);
+                    case "renderClouds" -> options.getCloudRenderMode().setValue(strings[1].equals("\"true\"") ? CloudRenderMode.FANCY : strings[1].equals("\"false\"") ? CloudRenderMode.OFF : CloudRenderMode.FAST);
                     case "attackIndicator" -> options.getAttackIndicator().setValue(AttackIndicator.byId(Integer.parseInt(strings[1])));
                     case "lang" -> {
                         client.getLanguageManager().setLanguage(client.getLanguageManager().getLanguage(strings[1]));
@@ -177,7 +177,7 @@ public class StandardSettings {
                         options.language = client.getLanguageManager().getLanguage().getCode();
                     }
                     case "chatVisibility" -> options.getChatVisibility().setValue(ChatVisibility.byId(Integer.parseInt(strings[1])));
-                    case "chatOpacity" -> options.getChtOpacity().setValue(Double.parseDouble(strings[1]));
+                    case "chatOpacity" -> options.getChatOpacity().setValue(Double.parseDouble(strings[1]));
                     case "chatLineSpacing" -> options.getChatLineSpacing().setValue(Double.parseDouble(strings[1]));
                     case "textBackgroundOpacity" -> options.getTextBackgroundOpacity().setValue(Double.parseDouble(strings[1]));
                     case "backgroundForChatOnly" -> options.getBackgroundForChatOnly().setValue(Boolean.parseBoolean(strings[1]));
@@ -207,7 +207,7 @@ public class StandardSettings {
                     case "mouseWheelSensitivity" -> options.getMouseWheelSensitivity().setValue(Double.parseDouble(strings[1]));
                     case "rawMouseInput" -> options.getRawMouseInput().setValue(Boolean.parseBoolean(strings[1]));
                     case "showAutosaveIndicator" -> options.getShowAutosaveIndicator().setValue(Boolean.parseBoolean(strings[1]));
-                    case "chatPreview" -> options.getChatPreview().setValue(Boolean.parseBoolean(strings[1]));
+                    case "chatPreview" -> options.getChatPreview().setValue(ChatPreviewMode.byId(Integer.parseInt(strings[1])));
                     case "onlyShowSecureChat" -> options.getOnlyShowSecureChat().setValue(Boolean.parseBoolean(strings[1]));
                     case "key" -> {
                         for (KeyBinding keyBinding : options.allKeys) {
@@ -322,7 +322,7 @@ public class StandardSettings {
         options.getGuiScale().setValue(check("GUI Scale", options.getGuiScale().getValue(), 0, Integer.MAX_VALUE));
         options.getMaxFps().setValue(check("Max Framerate", options.getMaxFps().getValue(), 1, 260));
         options.getBiomeBlendRadius().setValue(check("Biome Blend", options.getBiomeBlendRadius().getValue(), 0, 7));
-        options.getChtOpacity().setValue(check("Chat Text Opacity", options.getChtOpacity().getValue(), 0, 1, true));
+        options.getChatOpacity().setValue(check("Chat Text Opacity", options.getChatOpacity().getValue(), 0, 1, true));
         options.getChatLineSpacing().setValue(check("Line Spacing", options.getChatLineSpacing().getValue(), 0, 1, true));
         options.getTextBackgroundOpacity().setValue(check("Text Background Opacity", options.getTextBackgroundOpacity().getValue(), 0, 1, true));
         options.getChatHeightFocused().setValue(check("(Chat) Focused Height", options.getChatHeightFocused().getValue(), 0, 1, false));
@@ -462,11 +462,11 @@ public class StandardSettings {
                 "maxFps:" + options.getMaxFps().getValue() + l +
                 "graphicsMode:" + options.getGraphicsMode().getValue().getId() + l +
                 "ao:" + options.getAo().getValue().getId() + l +
-                "renderClouds:\"" + (options.getCloudRenderMod().getValue() == CloudRenderMode.FAST ? "fast" : options.getCloudRenderMod().getValue() == CloudRenderMode.FANCY) + "\"" + l +
+                "renderClouds:\"" + (options.getCloudRenderMode().getValue() == CloudRenderMode.FAST ? "fast" : options.getCloudRenderMode().getValue() == CloudRenderMode.FANCY) + "\"" + l +
                 "attackIndicator:" + options.getAttackIndicator().getValue().getId() + l +
                 "lang:" + options.language + l +
                 "chatVisibility:" + options.getChatVisibility().getValue().getId() + l +
-                "chatOpacity:" + options.getChtOpacity().getValue() + l +
+                "chatOpacity:" + options.getChatOpacity().getValue() + l +
                 "chatLineSpacing:" + options.getChatLineSpacing().getValue() + l +
                 "textBackgroundOpacity:" + options.getTextBackgroundOpacity().getValue() + l +
                 "backgroundForChatOnly:" + options.getBackgroundForChatOnly().getValue() + l +

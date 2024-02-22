@@ -76,7 +76,7 @@ public class OptionsCache {
     private double mouseWheelSensitivity;
     private boolean rawMouseInput;
     private boolean showAutosaveIndicator;
-    private boolean chatPreview;
+    private ChatPreviewMode chatPreview;
     private boolean onlyShowSecureChat;
     private Optional<Boolean> entityCulling;
     private boolean sneaking;
@@ -133,11 +133,11 @@ public class OptionsCache {
         maxFps = options.getMaxFps().getValue();
         graphicsMode = options.getGraphicsMode().getValue();
         ao = options.getAo().getValue();
-        cloudRenderMode = options.getCloudRenderMod().getValue();
+        cloudRenderMode = options.getCloudRenderMode().getValue();
         attackIndicator = options.getAttackIndicator().getValue();
         language = client.getLanguageManager().getLanguage();
         chatVisibility = options.getChatVisibility().getValue();
-        chatOpacity = options.getChtOpacity().getValue();
+        chatOpacity = options.getChatOpacity().getValue();
         chatLineSpacing = options.getChatLineSpacing().getValue();
         textBackgroundOpacity = options.getTextBackgroundOpacity().getValue();
         backgroundForChatOnly = options.getBackgroundForChatOnly().getValue();
@@ -227,7 +227,7 @@ public class OptionsCache {
         options.getMaxFps().setValue(maxFps);
         options.getGraphicsMode().setValue(graphicsMode);
         options.getAo().setValue(ao);
-        options.getCloudRenderMod().setValue(cloudRenderMode);
+        options.getCloudRenderMode().setValue(cloudRenderMode);
         options.getAttackIndicator().setValue(attackIndicator);
         if (!language.getCode().equals(options.language)) {
             client.getLanguageManager().setLanguage(language);
@@ -235,7 +235,7 @@ public class OptionsCache {
             options.language = client.getLanguageManager().getLanguage().getCode();
         }
         options.getChatVisibility().setValue(chatVisibility);
-        options.getChtOpacity().setValue(chatOpacity);
+        options.getChatOpacity().setValue(chatOpacity);
         options.getChatLineSpacing().setValue(chatLineSpacing);
         options.getTextBackgroundOpacity().setValue(textBackgroundOpacity);
         options.getBackgroundForChatOnly().setValue(backgroundForChatOnly);
