@@ -1,7 +1,7 @@
 package com.kingcontaria.standardsettings.mixins;
 
 import com.kingcontaria.standardsettings.StandardSettings;
-import net.minecraft.class_2934;
+import net.minecraft.class_0_2204;
 import net.minecraft.world.WorldSaveHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,13 +22,13 @@ public class WorldSaveHandlerMixin {
     private boolean isNewWorld;
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/io/File;mkdirs()Z", ordinal = 0))
-    private void isNewWorld(File file, String string, boolean bl, class_2934 arg, CallbackInfo ci) {
+    private void isNewWorld(File file, String string, boolean bl, class_0_2204 arg, CallbackInfo ci) {
         isNewWorld = !worldDir.exists();
     }
 
     // saves the standardoptions to world file for verification purposes
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void saveStandardoptionsTxt(File file, String string, boolean bl, class_2934 arg, CallbackInfo ci) {
+    private void saveStandardoptionsTxt(File file, String string, boolean bl, class_0_2204 arg, CallbackInfo ci) {
         if (isNewWorld && StandardSettings.standardoptionsCache != null) {
             try {
                 Files.write(worldDir.toPath().resolve("standardoptions.txt"), String.join(System.lineSeparator(), StandardSettings.standardoptionsCache).getBytes());

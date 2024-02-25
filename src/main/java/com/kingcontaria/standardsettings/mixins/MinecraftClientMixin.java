@@ -26,7 +26,7 @@ public class MinecraftClientMixin {
     private static boolean shouldResetSettings = true;
 
     // initialize StandardSettings, doesn't use ClientModInitializer because GameOptions need to be initialized first
-    @Inject(method = "initializeGame", at = @At("RETURN"))
+    @Inject(method = "init", at = @At("RETURN"))
     private void initializeStandardSettings(CallbackInfo ci) {
         // create standardoptions.txt
         if (!StandardSettings.standardoptionsFile.exists()) {
@@ -124,7 +124,7 @@ public class MinecraftClientMixin {
 
     // reset settings to standardoptions at the start of world creation
     // if it's an old world, try loading the Option Cache instead
-    @Inject(method = "startGame", at = @At("HEAD"))
+    @Inject(method = "startIntegratedServer", at = @At("HEAD"))
     private void resetSettings(String fileName, String worldName, LevelInfo levelInfo, CallbackInfo ci) {
         if (!new File("saves", fileName).exists()) {
             // don't reset settings if the last world was reset on world preview
@@ -145,7 +145,7 @@ public class MinecraftClientMixin {
 
     // activate OnWorldJoin options when finishing world creation
     // if instance is unfocused, it will instead wait
-    @Inject(method = "startGame", at = @At("RETURN"))
+    @Inject(method = "startIntegratedServer", at = @At("RETURN"))
     private void onWorldJoin(String fileName, String worldName, LevelInfo levelInfo, CallbackInfo ci) {
         if (Display.isActive()) {
             StandardSettings.changeSettingsOnJoin();
@@ -156,7 +156,7 @@ public class MinecraftClientMixin {
     }
 
     // activate OnWorldJoin options when focusing the instance
-    @Inject(method = "runGameLoop", at = @At("HEAD"))
+    @Inject(method = "method_0_2281", at = @At("HEAD"))
     private void changeSettingsOnJoin(CallbackInfo ci) {
         if (StandardSettings.changeOnWindowActivation && Display.isActive()) {
             StandardSettings.changeOnWindowActivation = false;

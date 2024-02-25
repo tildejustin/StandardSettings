@@ -13,6 +13,6 @@ public interface MinecraftClientAccessor {
     @Accessor
     String getOpenProfilerSection();
 
-    @Accessor
+    @Accessor("bakedModelManager")
     BakedModelManager getModelManager();
 }

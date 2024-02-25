@@ -9,6 +9,6 @@ import java.util.Map;
 
 @Mixin(LanguageManager.class)
 public interface LanguageManagerAccessor {
-    @Accessor("field_6653")
+    @Accessor("languageDefs")
     Map<String, LanguageDefinition> getLanguageDefs();
 }

@@ -2,14 +2,14 @@ package com.kingcontaria.standardsettings;
 
 import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.options.HandOption;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.resource.language.LanguageDefinition;
-import net.minecraft.client.sound.SoundCategory;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Arm;
 import org.lwjgl.opengl.Display;
 
 import java.util.Set;
@@ -46,7 +46,7 @@ public class OptionsCache {
     private int cloudMode;
     private int attackIndicator;
     private LanguageDefinition language;
-    private PlayerEntity.ChatVisibilityType chatVisibilityType;
+    private PlayerEntity.class_1659 chatVisibilityType;
     private float chatOpacity;
     private boolean advancedItemTooltips;
     private boolean pauseOnLostFocus;
@@ -55,7 +55,7 @@ public class OptionsCache {
     private float chatScale;
     private float chatWidth;
     private int mipmapLevels;
-    private HandOption mainArm;
+    private Arm mainArm;
     private int narrator;
     private boolean chunkborders;
     private boolean hitboxes;
@@ -69,58 +69,58 @@ public class OptionsCache {
     public OptionsCache(MinecraftClient client) {
         this.client = client;
         this.options = client.options;
-        keysAll = new int[options.keysAll.length];
+        keysAll = new int[options.allKeys.length];
         soundCategories = new float[SoundCategory.values().length];
     }
 
     public void save(String levelName) {
-        autoJump = options.field_14902;
-        chatColors = options.chatColor;
-        chatLinks = options.chatLink;
-        chatLinksPrompt = options.chatLinkPrompt;
-        enableVsync = options.vsync;
-        vbo = options.vbo;
+        autoJump = options.autoJump;
+        chatColors = options.chatColors;
+        chatLinks = options.chatLinks;
+        chatLinksPrompt = options.chatLinksPrompt;
+        enableVsync = options.enableVsync;
+        vbo = options.field_1899;
         entityShadows = options.entityShadows;
-        forceUnicodeFont = options.forceUnicode;
+        forceUnicodeFont = options.field_0_2663;
         invertYMouse = options.invertYMouse;
         reducedDebugInfo = options.reducedDebugInfo;
-        showSubtitles = options.field_13292;
-        touchscreen = options.touchScreen;
+        showSubtitles = options.showSubtitles;
+        touchscreen = options.touchscreen;
         fullscreen = options.fullscreen;
         bobView = options.bobView;
-        anaglyph3d = options.anaglyph3d;
-        mouseSensitivity = options.sensitivity;
-        fov = options.fov;
-        gamma = options.gamma;
+        anaglyph3d = options.field_1820;
+        mouseSensitivity = options.field_1843;
+        fov = options.field_1826;
+        gamma = options.field_1840;
         viewDistance = options.viewDistance;
         guiScale = options.guiScale;
-        particles = options.particle;
-        maxFps = options.maxFramerate;
+        particles = options.field_1882;
+        maxFps = options.maxFps;
         fancyGraphics = options.fancyGraphics;
-        ao = options.ao;
-        cloudMode = options.cloudMode;
-        attackIndicator = options.field_13290;
+        ao = options.field_1841;
+        cloudMode = options.field_1814;
+        attackIndicator = options.field_1895;
         language = client.getLanguageManager().getLanguage();
-        chatVisibilityType = options.chatVisibilityType;
-        chatOpacity = options.chatOpacity;
+        chatVisibilityType = options.field_1877;
+        chatOpacity = options.field_0_2718;
         advancedItemTooltips = options.advancedItemTooltips;
         pauseOnLostFocus = options.pauseOnLostFocus;
-        chatHeightFocused = options.chatHeightFocused;
-        chatHeightUnfocused = options.chatHeightUnfocused;
-        chatScale = options.chatScale;
-        chatWidth = options.chatWidth;
+        chatHeightFocused = options.field_1838;
+        chatHeightUnfocused = options.field_1825;
+        chatScale = options.field_1908;
+        chatWidth = options.field_1915;
         mipmapLevels = options.mipmapLevels;
-        mainArm = options.field_13289;
-        narrator = options.field_15879;
-        client.field_13282.method_13451();
-        chunkborders = client.field_13282.method_13451();
-        hitboxes = client.getEntityRenderManager().method_10203();
+        mainArm = options.mainArm;
+        narrator = options.field_1896;
+        client.debugRenderer.toggleShowChunkBorder();
+        chunkborders = client.debugRenderer.toggleShowChunkBorder();
+        hitboxes = client.getEntityRenderDispatcher().shouldRenderHitboxes();
         perspective = options.perspective;
         piedirectory = ((MinecraftClientAccessor)client).getOpenProfilerSection();
         hudHidden = options.hudHidden;
         int i = 0;
-        for (KeyBinding key : options.keysAll) {
-            keysAll[i++] = key.getCode();
+        for (KeyBinding key : options.allKeys) {
+            keysAll[i++] = key.method_1421();
         }
         i = 0;
         for (SoundCategory sound : SoundCategory.values()) {
@@ -135,70 +135,70 @@ public class OptionsCache {
         if (!levelName.equals(this.levelName)) {
             return;
         }
-        options.field_14902 = autoJump;
-        options.chatColor = chatColors;
-        options.chatLink = chatLinks;
-        options.chatLinkPrompt = chatLinksPrompt;
-        Display.setVSyncEnabled(options.vsync = enableVsync);
-        options.vbo = vbo;
+        options.autoJump = autoJump;
+        options.chatColors = chatColors;
+        options.chatLinks = chatLinks;
+        options.chatLinksPrompt = chatLinksPrompt;
+        Display.setVSyncEnabled(options.enableVsync = enableVsync);
+        options.field_1899 = vbo;
         options.entityShadows = entityShadows;
-        client.textRenderer.method_960(client.getLanguageManager().method_5938() || (options.forceUnicode = forceUnicodeFont));
+        client.field_1772.method_0_2391(client.getLanguageManager().method_0_4393() || (options.field_0_2663 = forceUnicodeFont));
         options.invertYMouse = invertYMouse;
         options.reducedDebugInfo = reducedDebugInfo;
-        options.field_13292 = showSubtitles;
-        options.touchScreen = touchscreen;
+        options.showSubtitles = showSubtitles;
+        options.touchscreen = touchscreen;
         if (options.fullscreen != fullscreen) {
             if (Display.isActive()) {
-                client.toggleFullscreen();
+                client.method_0_2307();
             } else {
                 StandardSettings.LOGGER.error("Could not reset fullscreen mode because window wasn't focused!");
             }
         }
         options.bobView = bobView;
-        if (options.anaglyph3d != (options.anaglyph3d = anaglyph3d)) {
-            client.getTextureManager().reload(client.getResourceManager());
+        if (options.field_1820 != (options.field_1820 = anaglyph3d)) {
+            client.getTextureManager().method_14491(client.getResourceManager());
         }
-        options.sensitivity = mouseSensitivity;
-        options.fov = fov;
-        options.gamma = gamma;
+        options.field_1843 = mouseSensitivity;
+        options.field_1826 = fov;
+        options.field_1840 = gamma;
         options.viewDistance = viewDistance;
         options.guiScale = guiScale;
-        options.particle = particles;
-        options.maxFramerate = maxFps;
+        options.field_1882 = particles;
+        options.maxFps = maxFps;
         options.fancyGraphics = fancyGraphics;
-        options.ao = ao;
-        options.cloudMode = cloudMode;
-        options.field_13290 = attackIndicator;
-        if (!options.language.equals(options.language = language.method_5935())) {
-            client.getLanguageManager().method_5939(language);
-            client.getLanguageManager().reload(client.getResourceManager());
+        options.field_1841 = ao;
+        options.field_1814 = cloudMode;
+        options.field_1895 = attackIndicator;
+        if (!options.language.equals(options.language = language.method_4671())) {
+            client.getLanguageManager().setLanguage(language);
+            client.getLanguageManager().method_14491(client.getResourceManager());
         }
-        options.chatVisibilityType = chatVisibilityType;
-        options.chatOpacity = chatOpacity;
+        options.field_1877 = chatVisibilityType;
+        options.field_0_2718 = chatOpacity;
         options.advancedItemTooltips = advancedItemTooltips;
         options.pauseOnLostFocus = pauseOnLostFocus;
-        options.chatHeightFocused = chatHeightFocused;
-        options.chatHeightUnfocused = chatHeightUnfocused;
-        options.chatScale = chatScale;
-        options.chatWidth = chatWidth;
+        options.field_1838 = chatHeightFocused;
+        options.field_1825 = chatHeightUnfocused;
+        options.field_1908 = chatScale;
+        options.field_1915 = chatWidth;
         if (options.mipmapLevels != mipmapLevels) {
-            client.getSpriteAtlasTexture().setMaxTextureSize(options.mipmapLevels = mipmapLevels);
-            client.getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
-            client.getSpriteAtlasTexture().setFilter(false, options.mipmapLevels > 0);
-            ((MinecraftClientAccessor) client).getModelManager().reload(client.getResourceManager());
+            client.getSpriteAtlas().setMipLevel(options.mipmapLevels = mipmapLevels);
+            client.getTextureManager().bindTextureInner(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+            client.getSpriteAtlas().setFilter(false, options.mipmapLevels > 0);
+            ((MinecraftClientAccessor) client).getModelManager().method_14491(client.getResourceManager());
         }
-        options.field_13289 = mainArm;
-        options.field_15879 = narrator;
-        if (client.field_13282.method_13451() != chunkborders) {
-            client.field_13282.method_13451();
+        options.mainArm = mainArm;
+        options.field_1896 = narrator;
+        if (client.debugRenderer.toggleShowChunkBorder() != chunkborders) {
+            client.debugRenderer.toggleShowChunkBorder();
         }
-        client.getEntityRenderManager().method_10205(hitboxes);
+        client.getEntityRenderDispatcher().setRenderHitboxes(hitboxes);
         options.perspective = perspective;
         ((MinecraftClientAccessor)client).setOpenProfilerSection(piedirectory);
         options.hudHidden = hudHidden;
         int i = 0;
-        for (KeyBinding keyBinding : options.keysAll) {
-            keyBinding.setCode(keysAll[i++]);
+        for (KeyBinding keyBinding : options.allKeys) {
+            keyBinding.method_1422(keysAll[i++]);
         }
         KeyBinding.updateKeysByCode();
         i = 0;

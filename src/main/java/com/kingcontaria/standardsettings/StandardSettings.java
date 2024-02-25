@@ -6,15 +6,15 @@ import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccesso
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.class_0_686;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.options.HandOption;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.sound.SoundCategory;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Arm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
@@ -121,68 +121,68 @@ public class StandardSettings {
                 String[] string0_split = strings[0].split("_", 2);
 
                 switch (string0_split[0]) {
-                    case "autoJump": options.field_14902 = Boolean.parseBoolean(strings[1]); break;
-                    case "chatColors": options.chatColor = Boolean.parseBoolean(strings[1]); break;
-                    case "chatLinks": options.chatLink = Boolean.parseBoolean(strings[1]); break;
-                    case "chatLinksPrompt": options.chatLinkPrompt = Boolean.parseBoolean(strings[1]); break;
-                    case "enableVsync": Display.setVSyncEnabled(options.vsync = Boolean.parseBoolean(strings[1])); break;
-                    case "useVbo": options.vbo = Boolean.parseBoolean(strings[1]); break;
+                    case "autoJump": options.autoJump = Boolean.parseBoolean(strings[1]); break;
+                    case "chatColors": options.chatColors = Boolean.parseBoolean(strings[1]); break;
+                    case "chatLinks": options.chatLinks = Boolean.parseBoolean(strings[1]); break;
+                    case "chatLinksPrompt": options.chatLinksPrompt = Boolean.parseBoolean(strings[1]); break;
+                    case "enableVsync": Display.setVSyncEnabled(options.enableVsync = Boolean.parseBoolean(strings[1])); break;
+                    case "useVbo": options.field_1899 = Boolean.parseBoolean(strings[1]); break;
                     case "entityShadows": options.entityShadows = Boolean.parseBoolean(strings[1]); break;
-                    case "forceUnicodeFont": client.textRenderer.method_960(client.getLanguageManager().method_5938() || (options.forceUnicode = Boolean.parseBoolean(strings[1]))); break;
+                    case "forceUnicodeFont": client.field_1772.method_0_2391(client.getLanguageManager().method_0_4393() || (options.field_0_2663 = Boolean.parseBoolean(strings[1]))); break;
                     case "invertYMouse": options.invertYMouse = Boolean.parseBoolean(strings[1]); break;
                     case "reducedDebugInfo": options.reducedDebugInfo = Boolean.parseBoolean(strings[1]); break;
-                    case "showSubtitles": options.field_13292 = Boolean.parseBoolean(strings[1]); break;
-                    case "touchscreen": options.touchScreen = Boolean.parseBoolean(strings[1]); break;
+                    case "showSubtitles": options.showSubtitles = Boolean.parseBoolean(strings[1]); break;
+                    case "touchscreen": options.touchscreen = Boolean.parseBoolean(strings[1]); break;
                     case "fullscreen":
                         if (options.fullscreen != Boolean.parseBoolean(strings[1])) {
                             if (Display.isActive()) {
-                                client.toggleFullscreen();
+                                client.method_0_2307();
                             } else {
                                 LOGGER.error("Could not reset fullscreen mode because window wasn't focused!");
                             }
                         } break;
                     case "bobView": options.bobView = Boolean.parseBoolean(strings[1]); break;
                     case "anaglyph3d":
-                        if (options.anaglyph3d != (options.anaglyph3d = Boolean.parseBoolean(strings[1]))) {
-                            client.getTextureManager().reload(client.getResourceManager());
+                        if (options.field_1820 != (options.field_1820 = Boolean.parseBoolean(strings[1]))) {
+                            client.getTextureManager().method_14491(client.getResourceManager());
                         } break;
-                    case "mouseSensitivity": options.sensitivity = Float.parseFloat(strings[1]); break;
-                    case "fov": options.fov = Float.parseFloat(strings[1]) < 5 ? Float.parseFloat(strings[1]) * 40.0f + 70.0f : Integer.parseInt(strings[1]); break;
-                    case "gamma": options.gamma = Float.parseFloat(strings[1]); break;
+                    case "mouseSensitivity": options.field_1843 = Float.parseFloat(strings[1]); break;
+                    case "fov": options.field_1826 = Float.parseFloat(strings[1]) < 5 ? Float.parseFloat(strings[1]) * 40.0f + 70.0f : Integer.parseInt(strings[1]); break;
+                    case "gamma": options.field_1840 = Float.parseFloat(strings[1]); break;
                     case "renderDistance": options.viewDistance = Integer.parseInt(strings[1]); break;
                     case "guiScale": options.guiScale = Integer.parseInt(strings[1]); break;
-                    case "particles": options.particle = Integer.parseInt(strings[1]); break;
-                    case "maxFps": options.maxFramerate = Integer.parseInt(strings[1]); break;
+                    case "particles": options.field_1882 = Integer.parseInt(strings[1]); break;
+                    case "maxFps": options.maxFps = Integer.parseInt(strings[1]); break;
                     case "fancyGraphics": options.fancyGraphics = Boolean.parseBoolean(strings[1]); break;
-                    case "ao": options.ao = Integer.parseInt(strings[1]); break;
-                    case "renderClouds": options.cloudMode = strings[1].equals("true") ? 2 : strings[1].equals("false") ? 0 : 1; break;
-                    case "attackIndicator": options.field_13290 = Integer.parseInt(strings[1]); break;
+                    case "ao": options.field_1841 = Integer.parseInt(strings[1]); break;
+                    case "renderClouds": options.field_1814 = strings[1].equals("true") ? 2 : strings[1].equals("false") ? 0 : 1; break;
+                    case "attackIndicator": options.field_1895 = Integer.parseInt(strings[1]); break;
                     case "lang":
                         if (!options.language.equals(strings[1]) && ((LanguageManagerAccessor)client.getLanguageManager()).getLanguageDefs().containsKey(strings[1])) {
-                            client.getLanguageManager().method_5939(((LanguageManagerAccessor)client.getLanguageManager()).getLanguageDefs().get(options.language = strings[1]));
-                            client.getLanguageManager().reload(client.getResourceManager());
+                            client.getLanguageManager().setLanguage(((LanguageManagerAccessor)client.getLanguageManager()).getLanguageDefs().get(options.language = strings[1]));
+                            client.getLanguageManager().method_14491(client.getResourceManager());
                         } break;
-                    case "chatVisibility": options.chatVisibilityType = PlayerEntity.ChatVisibilityType.getById(Integer.parseInt(strings[1])); break;
-                    case "chatOpacity": options.chatOpacity = Float.parseFloat(strings[1]); break;
+                    case "chatVisibility": options.field_1877 = PlayerEntity.class_1659.method_7360(Integer.parseInt(strings[1])); break;
+                    case "chatOpacity": options.field_0_2718 = Float.parseFloat(strings[1]); break;
                     case "advancedItemTooltips": options.advancedItemTooltips = Boolean.parseBoolean(strings[1]); break;
                     case "pauseOnLostFocus": options.pauseOnLostFocus = Boolean.parseBoolean(strings[1]); break;
-                    case "chatHeightFocused": options.chatHeightFocused = Float.parseFloat(strings[1]); break;
-                    case "chatHeightUnfocused": options.chatHeightUnfocused = Float.parseFloat(strings[1]); break;
-                    case "chatScale": options.chatScale = Float.parseFloat(strings[1]); break;
-                    case "chatWidth": options.chatWidth = Float.parseFloat(strings[1]); break;
+                    case "chatHeightFocused": options.field_1838 = Float.parseFloat(strings[1]); break;
+                    case "chatHeightUnfocused": options.field_1825 = Float.parseFloat(strings[1]); break;
+                    case "chatScale": options.field_1908 = Float.parseFloat(strings[1]); break;
+                    case "chatWidth": options.field_1915 = Float.parseFloat(strings[1]); break;
                     case "mipmapLevels":
                         if (options.mipmapLevels != Integer.parseInt(strings[1])) {
-                            client.getSpriteAtlasTexture().setMaxTextureSize(options.mipmapLevels = Integer.parseInt(strings[1]));
-                            client.getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
-                            client.getSpriteAtlasTexture().setFilter(false, options.mipmapLevels > 0);
-                            ((MinecraftClientAccessor) client).getModelManager().reload(client.getResourceManager());
+                            client.getSpriteAtlas().setMipLevel(options.mipmapLevels = Integer.parseInt(strings[1]));
+                            client.getTextureManager().bindTextureInner(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+                            client.getSpriteAtlas().setFilter(false, options.mipmapLevels > 0);
+                            ((MinecraftClientAccessor) client).getModelManager().method_14491(client.getResourceManager());
                         } break;
-                    case "mainHand": options.field_13289 = "left".equalsIgnoreCase(strings[1]) ? HandOption.LEFT : HandOption.RIGHT; break;
-                    case "narrator": options.field_15879 = Integer.parseInt(strings[1]); break;
+                    case "mainHand": options.mainArm = "left".equalsIgnoreCase(strings[1]) ? Arm.LEFT : Arm.RIGHT; break;
+                    case "narrator": options.field_1896 = Integer.parseInt(strings[1]); break;
                     case "key":
-                        for (KeyBinding keyBinding : options.keysAll) {
+                        for (KeyBinding keyBinding : options.allKeys) {
                             if (string0_split[1].equals(keyBinding.getTranslationKey())) {
-                                keyBinding.setCode(Integer.parseInt(strings[1])); break;
+                                keyBinding.method_1422(Integer.parseInt(strings[1])); break;
                             }
                         } break;
                     case "soundCategory":
@@ -198,10 +198,10 @@ public class StandardSettings {
                             }
                         } break;
                     case "chunkborders":
-                        if (client.field_13282.method_13451() != Boolean.parseBoolean(strings[1])) {
-                            client.field_13282.method_13451();
+                        if (client.debugRenderer.toggleShowChunkBorder() != Boolean.parseBoolean(strings[1])) {
+                            client.debugRenderer.toggleShowChunkBorder();
                         } break;
-                    case "hitboxes": client.getEntityRenderManager().method_10205(Boolean.parseBoolean(strings[1])); break;
+                    case "hitboxes": client.getEntityRenderDispatcher().setRenderHitboxes(Boolean.parseBoolean(strings[1])); break;
                     case "perspective": options.perspective = Integer.parseInt(strings[1]) % 3; break;
                     case "piedirectory":
                         if (!strings[1].split("\\.")[0].equals("root")) break;
@@ -229,18 +229,18 @@ public class StandardSettings {
             options.viewDistance = viewDistance;
             client.worldRenderer.scheduleTerrainUpdate();
         });
-        fovOnWorldJoin.ifPresent(fov -> options.fov = fov);
+        fovOnWorldJoin.ifPresent(fov -> options.field_1826 = fov);
         guiScaleOnWorldJoin.ifPresent(guiScale -> {
             options.guiScale = guiScale;
             if (client.currentScreen != null) {
-                Window window = new Window(client);
-                client.currentScreen.init(client, window.getWidth(), window.getHeight());
+                class_0_686 window = new class_0_686(client);
+                client.currentScreen.method_2233(client, window.method_0_2459(), window.method_0_2460());
             }
         });
 
         if (fovOnWorldJoin.isPresent() || guiScaleOnWorldJoin.isPresent() || renderDistanceOnWorldJoin.isPresent()) {
             emptyOnWorldJoinOptions();
-            options.save();
+            options.write();
             LOGGER.info("Changed Settings on World Join ({} ms)", (System.nanoTime() - start) / 1000000.0f);
         }
     }
@@ -258,22 +258,22 @@ public class StandardSettings {
     public static void checkSettings() {
         long start = System.nanoTime();
 
-        options.sensitivity = check("Sensitivity", options.sensitivity * 2, 0, 2, true) / 2;
-        options.fov = (int) (check("FOV", options.fov, 30, 110, false));
-        options.gamma = check("Brightness", options.gamma, 0, 5, true);
+        options.field_1843 = check("Sensitivity", options.field_1843 * 2, 0, 2, true) / 2;
+        options.field_1826 = (int) (check("FOV", options.field_1826, 30, 110, false));
+        options.field_1840 = check("Brightness", options.field_1840, 0, 5, true);
         options.viewDistance = check("Render Distance", options.viewDistance, 2, 32);
         options.guiScale = check("GUI Scale", options.guiScale, 0, Integer.MAX_VALUE);
-        options.maxFramerate = check("Max Framerate", options.maxFramerate, 1, 260);
-        options.chatOpacity = check("Chat Text Opacity", options.chatOpacity, 0, 1, true);
-        options.chatHeightFocused = check("(Chat) Focused Height", options.chatHeightFocused, 0, 1, false);
-        options.chatHeightUnfocused = check("(Chat) Unfocused Height", options.chatHeightUnfocused, 0, 1, false);
-        options.chatScale = check("(Chat) Scale", options.chatScale, 0, 1, true);
-        options.chatWidth = check("(Chat) Width", options.chatWidth, 0, 1, false);
+        options.maxFps = check("Max Framerate", options.maxFps, 1, 260);
+        options.field_0_2718 = check("Chat Text Opacity", options.field_0_2718, 0, 1, true);
+        options.field_1838 = check("(Chat) Focused Height", options.field_1838, 0, 1, false);
+        options.field_1825 = check("(Chat) Unfocused Height", options.field_1825, 0, 1, false);
+        options.field_1908 = check("(Chat) Scale", options.field_1908, 0, 1, true);
+        options.field_1915 = check("(Chat) Width", options.field_1915, 0, 1, false);
         if (options.mipmapLevels != (options.mipmapLevels = check("Mipmap Levels", options.mipmapLevels, 0, 4))) {
-            client.getSpriteAtlasTexture().setMaxTextureSize(options.mipmapLevels);
-            client.getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
-            client.getSpriteAtlasTexture().setFilter(false, options.mipmapLevels > 0);
-            ((MinecraftClientAccessor) client).getModelManager().reload(client.getResourceManager());
+            client.getSpriteAtlas().setMipLevel(options.mipmapLevels);
+            client.getTextureManager().bindTextureInner(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+            client.getSpriteAtlas().setFilter(false, options.mipmapLevels > 0);
+            ((MinecraftClientAccessor) client).getModelManager().method_14491(client.getResourceManager());
         }
         for (SoundCategory soundCategory : SoundCategory.values()) {
             options.setSoundVolume(soundCategory, check("(Music & Sounds) " + SoundCategoryName.valueOf(soundCategory.name()).assignedName, options.getSoundVolume(soundCategory), 0, 1, true));
@@ -289,7 +289,7 @@ public class StandardSettings {
             guiScaleOnWorldJoin = Optional.of(check("GUI Scale (On World Join)", guiScaleOnWorldJoin.get(), 0, 3));
         }
 
-        options.save();
+        options.write();
 
         LOGGER.info("Finished checking and saving Settings ({} ms)", (System.nanoTime() - start) / 1000000.0f);
     }
@@ -345,46 +345,46 @@ public class StandardSettings {
     // returns the contents for a new standardoptions.txt file
     public static String getStandardoptionsTxt() {
         String l = System.lineSeparator();
-        StringBuilder string = new StringBuilder("autoJump:" + options.field_14902 + l +
-                "chatColors:" + options.chatColor + l +
-                "chatLinks:" + options.chatLink + l +
-                "chatLinksPrompt:" + options.chatLinkPrompt + l +
-                "enableVsync:" + options.vsync + l +
-                "useVbo:" + options.vbo + l +
+        StringBuilder string = new StringBuilder("autoJump:" + options.autoJump + l +
+                "chatColors:" + options.chatColors + l +
+                "chatLinks:" + options.chatLinks + l +
+                "chatLinksPrompt:" + options.chatLinksPrompt + l +
+                "enableVsync:" + options.enableVsync + l +
+                "useVbo:" + options.field_1899 + l +
                 "entityShadows:" + options.entityShadows + l +
-                "forceUnicodeFont:" + options.forceUnicode + l +
+                "forceUnicodeFont:" + options.field_0_2663 + l +
                 "invertYMouse:" + options.invertYMouse + l +
                 "reducedDebugInfo:" + options.reducedDebugInfo + l +
-                "showSubtitles:" + options.field_13292 + l +
-                "touchscreen:" + options.touchScreen + l +
+                "showSubtitles:" + options.showSubtitles + l +
+                "touchscreen:" + options.touchscreen + l +
                 "fullscreen:" + options.fullscreen + l +
                 "bobView:" + options.bobView + l +
-                "anaglyph3d:" + options.anaglyph3d + l +
-                "mouseSensitivity:" + options.sensitivity + l +
-                "fov:" + (options.fov - 70.0f) / 40.0f + l +
-                "gamma:" + options.gamma + l +
+                "anaglyph3d:" + options.field_1820 + l +
+                "mouseSensitivity:" + options.field_1843 + l +
+                "fov:" + (options.field_1826 - 70.0f) / 40.0f + l +
+                "gamma:" + options.field_1840 + l +
                 "renderDistance:" + options.viewDistance + l +
                 "guiScale:" + options.guiScale + l +
-                "particles:" + options.particle + l +
-                "maxFps:" + options.maxFramerate + l +
+                "particles:" + options.field_1882 + l +
+                "maxFps:" + options.maxFps + l +
                 "fancyGraphics:" + options.fancyGraphics + l +
-                "ao:" + options.ao + l +
-                "renderClouds:" + (options.cloudMode == 1 ? "fast" : options.cloudMode == 2) + l +
-                "attackIndicator:" + options.field_13290 + l +
+                "ao:" + options.field_1841 + l +
+                "renderClouds:" + (options.field_1814 == 1 ? "fast" : options.field_1814 == 2) + l +
+                "attackIndicator:" + options.field_1895 + l +
                 "lang:" + options.language + l +
-                "chatVisibility:" + options.chatVisibilityType.getId() + l +
-                "chatOpacity:" + options.chatOpacity + l +
+                "chatVisibility:" + options.field_1877.method_7362() + l +
+                "chatOpacity:" + options.field_0_2718 + l +
                 "advancedItemTooltips:" + options.advancedItemTooltips + l +
                 "pauseOnLostFocus:" + options.pauseOnLostFocus + l +
-                "chatHeightFocused:" + options.chatHeightFocused + l +
-                "chatHeightUnfocused:" + options.chatHeightUnfocused + l +
-                "chatScale:" + options.chatScale + l +
-                "chatWidth:" + options.chatWidth + l +
+                "chatHeightFocused:" + options.field_1838 + l +
+                "chatHeightUnfocused:" + options.field_1825 + l +
+                "chatScale:" + options.field_1908 + l +
+                "chatWidth:" + options.field_1915 + l +
                 "mipmapLevels:" + options.mipmapLevels + l +
-                "mainHand:" + (options.field_13289 == HandOption.LEFT ? "left" : "right") + l +
-                "narrator:" + options.field_15879 + l);
-        for (KeyBinding keyBinding : options.keysAll) {
-            string.append("key_").append(keyBinding.getTranslationKey()).append(":").append(keyBinding.getCode()).append(l);
+                "mainHand:" + (options.mainArm == Arm.LEFT ? "left" : "right") + l +
+                "narrator:" + options.field_1896 + l);
+        for (KeyBinding keyBinding : options.allKeys) {
+            string.append("key_").append(keyBinding.getTranslationKey()).append(":").append(keyBinding.method_1421()).append(l);
         }
         for (SoundCategory soundCategory : SoundCategory.values()) {
             string.append("soundCategory_").append(soundCategory.getName()).append(":").append(options.getSoundVolume(soundCategory)).append(l);
