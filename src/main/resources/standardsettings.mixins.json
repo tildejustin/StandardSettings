@@ -7,12 +7,15 @@
     "CreateWorldScreenMixin",
     "GameOptionsMixin",
     "MinecraftClientMixin",
+    "PlayerSaveHandlerMixin",
     "WorldListWidgetEntryMixin",
-    "WorldSaveHandlerMixin",
     "accessors.GameOptionsAccessor",
     "accessors.MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "accessors.PieChartAccessor"
+  ]
 }
