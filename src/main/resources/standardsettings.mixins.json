@@ -10,12 +10,9 @@
     "PlayerSaveHandlerMixin",
     "WorldListWidgetEntryMixin",
     "accessors.GameOptionsAccessor",
-    "accessors.MinecraftClientAccessor"
+    "accessors.PieChartAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "accessors.PieChartAccessor"
-  ]
+  }
 }

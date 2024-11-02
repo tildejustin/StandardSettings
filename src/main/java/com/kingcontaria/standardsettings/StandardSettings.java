@@ -2,8 +2,11 @@ package com.kingcontaria.standardsettings;
 
 import com.google.common.base.Suppliers;
 import com.google.common.io.Files;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.kingcontaria.standardsettings.mixins.accessors.PieChartAccessor;
-import com.mojang.serialization.JavaOps;
+import com.mojang.serialization.JsonOps;
 import net.caffeinemc.mods.sodium.client.SodiumClientMod;
 import net.caffeinemc.mods.sodium.client.gui.SodiumGameOptions;
 import net.fabricmc.api.EnvType;
@@ -258,6 +261,7 @@ public class StandardSettings {
                     case "chatLineSpacing" -> options.getChatLineSpacing().setValue(Double.parseDouble(strings[1]));
                     case "textBackgroundOpacity" -> options.getTextBackgroundOpacity().setValue(Double.parseDouble(strings[1]));
                     case "backgroundForChatOnly" -> options.getBackgroundForChatOnly().setValue(Boolean.parseBoolean(strings[1]));
+                    case "highContrastBlockOutline" -> options.getHighContrastBlockOutline().setValue(Boolean.parseBoolean(strings[1]));
                     case "fullscreenResolution" -> {
                         if (!strings[1].equals(window.getFullscreenVideoMode().isPresent() ? window.getFullscreenVideoMode().get().asString() : "")) {
                             window.setFullscreenVideoMode(VideoMode.fromString(strings[1]));
@@ -278,7 +282,12 @@ public class StandardSettings {
                             reloadBakedModelManager();
                         }
                     }
-                    case "inactivityFpsLimit" -> options.getInactivityFpsLimit().setValue(InactivityFpsLimit.Codec.decode(JavaOps.INSTANCE, strings[1]).getOrThrow().getFirst());
+                    case "inactivityFpsLimit" -> {
+                        // GameOptions#read
+                        JsonReader jsonReader = new JsonReader(new StringReader(strings[1].isEmpty() ? "\"\"" : strings[1]));
+                        JsonElement jsonElement = JsonParser.parseReader(jsonReader);
+                        options.getInactivityFpsLimit().setValue(InactivityFpsLimit.Codec.parse(JsonOps.INSTANCE, jsonElement).getOrThrow());
+                    }
                     case "mainHand" -> options.getMainArm().setValue("\"left\"".equalsIgnoreCase(strings[1]) ? Arm.LEFT : Arm.RIGHT);
                     case "narrator" -> options.getNarrator().setValue(NarratorMode.byId(Integer.parseInt(strings[1])));
                     case "biomeBlendRadius" -> options.getBiomeBlendRadius().setValue(Integer.parseInt(strings[1]));
@@ -566,6 +575,7 @@ public class StandardSettings {
                 "chatLineSpacing:" + options.getChatLineSpacing().getValue() + l +
                 "textBackgroundOpacity:" + options.getTextBackgroundOpacity().getValue() + l +
                 "backgroundForChatOnly:" + options.getBackgroundForChatOnly().getValue() + l +
+                "highContrastBlockOutline:" + options.getHighContrastBlockOutline().getValue() + l +
                 "fullscreenResolution:" + (options.fullscreenResolution == null ? "" : options.fullscreenResolution) + l +
                 "advancedItemTooltips:" + options.advancedItemTooltips + l +
                 "pauseOnLostFocus:" + options.pauseOnLostFocus + l +
@@ -575,7 +585,7 @@ public class StandardSettings {
                 "chatScale:" + options.getChatScale().getValue() + l +
                 "chatWidth:" + options.getChatWidth().getValue() + l +
                 "mipmapLevels:" + options.getMipmapLevels().getValue() + l +
-                "inactivityFpsLimit:" + options.getInactivityFpsLimit().getValue() + l +
+                "inactivityFpsLimit:" + InactivityFpsLimit.Codec.encodeStart(JsonOps.INSTANCE, options.getInactivityFpsLimit().getValue()).getOrThrow() + l +
                 "mainHand:" + (options.getMainArm().getValue() == Arm.LEFT ? "\"left\"" : "\"right\"") + l +
                 "narrator:" + options.getNarrator().getValue().getId() + l +
                 "biomeBlendRadius:" + options.getBiomeBlendRadius().getValue() + l +

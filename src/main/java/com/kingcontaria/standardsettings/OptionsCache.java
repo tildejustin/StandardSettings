@@ -63,6 +63,7 @@ public class OptionsCache {
     private double chatLineSpacing;
     private double textBackgroundOpacity;
     private boolean backgroundForChatOnly;
+    private boolean highContrastBlockOutline;
     private Optional<VideoMode> fullscreenResolution;
     private boolean advancedItemTooltips;
     private boolean pauseOnLostFocus;
@@ -145,6 +146,7 @@ public class OptionsCache {
         chatLineSpacing = options.getChatLineSpacing().getValue();
         textBackgroundOpacity = options.getTextBackgroundOpacity().getValue();
         backgroundForChatOnly = options.getBackgroundForChatOnly().getValue();
+        highContrastBlockOutline = options.getHighContrastBlockOutline().getValue();
         fullscreenResolution = window.getFullscreenVideoMode();
         advancedItemTooltips = options.advancedItemTooltips;
         pauseOnLostFocus = options.pauseOnLostFocus;
@@ -251,6 +253,7 @@ public class OptionsCache {
         options.getChatLineSpacing().setValue(chatLineSpacing);
         options.getTextBackgroundOpacity().setValue(textBackgroundOpacity);
         options.getBackgroundForChatOnly().setValue(backgroundForChatOnly);
+        options.getHighContrastBlockOutline().setValue(highContrastBlockOutline);
         if (fullscreenResolution != window.getFullscreenVideoMode()) {
             window.setFullscreenVideoMode(fullscreenResolution);
             window.applyFullscreenVideoMode();
