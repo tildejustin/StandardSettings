@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.DoubleOptionSliderWidget;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.NotNull;
@@ -45,12 +46,12 @@ public class DoubleOptionStandardSetting extends StandardSetting<Double> {
     }
 
     @Override
-    public @NotNull Text getName() {
-        return new TranslatableText(((OptionAccessor) this.option).standardsettings$getKey());
+    public @NotNull String getName() {
+        return I18n.translate(((OptionAccessor) this.option).standardsettings$getKey());
     }
 
     @Override
-    public @NotNull Text getDisplayText() {
+    public @NotNull String getDisplayText() {
         return StandardSetting.getTextWithoutPrefix(this.option.getDisplayString(this.options), this.option.getDisplayPrefix());
     }
 

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
 import net.minecraft.client.options.CyclingOption;
 import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.NotNull;
@@ -59,12 +60,12 @@ public class CyclingOptionStandardSetting extends StandardSetting<Integer> {
     }
 
     @Override
-    public @NotNull Text getName() {
-        return new TranslatableText(((OptionAccessor) this.option).standardsettings$getKey());
+    public @NotNull String getName() {
+        return I18n.translate(((OptionAccessor) this.option).standardsettings$getKey());
     }
 
     @Override
-    public @NotNull Text getDisplayText() {
+    public @NotNull String getDisplayText() {
         return StandardSetting.getTextWithoutPrefix(this.option.getMessage(this.options), this.option.getDisplayPrefix());
     }
 

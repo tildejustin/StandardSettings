@@ -8,8 +8,6 @@ import me.contaria.standardsettings.gui.StandardOptionWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.options.GameOptions;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,14 +82,14 @@ public abstract class StandardSetting<T> implements SpeedrunOption<T> {
     }
 
     @Override
-    public final @NotNull Text getText() {
+    public final @NotNull String getText() {
         if (!this.isEnabled()) {
-            return new LiteralText("-");
+            return "-";
         }
         return this.getDisplayText();
     }
 
-    protected abstract @NotNull Text getDisplayText();
+    protected abstract @NotNull String getDisplayText();
 
     @Override
     public final void fromJson(JsonElement jsonElement) {
@@ -146,24 +144,25 @@ public abstract class StandardSetting<T> implements SpeedrunOption<T> {
         this.enabled = false;
     }
 
-    protected static Text getTextWithoutPrefix(Text text, Text prefix) {
-        if (!text.copy().equals(prefix.copy())) {
+    protected static String getTextWithoutPrefix(String text, String prefix) {
+        if (!text.equals(prefix)) {
             return text;
         }
+        return text.substring(prefix.length());
 
-        List<Text> prefixSiblings = prefix.getSiblings();
-        List<Text> textSiblings = text.getSiblings();
-
-        if (prefixSiblings.size() >= textSiblings.size()) {
-            return new LiteralText("");
-        }
-
-        List<Text> restText = textSiblings.subList(prefixSiblings.size(), textSiblings.size());
-
-        MutableText newText = restText.remove(0).shallowCopy();
-        for (Text t : restText) {
-            newText.append(t);
-        }
-        return newText;
+//        List<Text> prefixSiblings = prefix.getSiblings();
+//        List<Text> textSiblings = text.getSiblings();
+//
+//        if (prefixSiblings.size() >= textSiblings.size()) {
+//            return "";
+//        }
+//
+//        List<Text> restText = textSiblings.subList(prefixSiblings.size(), textSiblings.size());
+//
+//        MutableText newText = restText.remove(0).shallowCopy();
+//        for (Text t : restText) {
+//            newText.append(t);
+//        }
+//        return newText;
     }
 }

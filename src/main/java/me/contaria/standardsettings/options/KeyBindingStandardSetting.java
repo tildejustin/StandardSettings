@@ -7,18 +7,15 @@ import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KeyBindingStandardSetting extends StandardSetting<InputUtil.Key> {
+public class KeyBindingStandardSetting extends StandardSetting<InputUtil.KeyCode> {
     private final KeyBinding keyBinding;
-    private InputUtil.Key value;
+    private InputUtil.KeyCode value;
 
     public KeyBindingStandardSetting(String id, @Nullable String category, KeyBinding keyBinding) {
         super(id, category, null);
@@ -28,59 +25,59 @@ public class KeyBindingStandardSetting extends StandardSetting<InputUtil.Key> {
     }
 
     @Override
-    public InputUtil.Key get() {
+    public InputUtil.KeyCode get() {
         return this.value;
     }
 
     @Override
-    public void set(InputUtil.Key value) {
+    public void set(InputUtil.KeyCode value) {
         this.value = value;
     }
 
     @Override
-    protected void set(GameOptions options, InputUtil.Key value) {
+    protected void set(GameOptions options, InputUtil.KeyCode value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected InputUtil.Key get(GameOptions options) {
+    protected InputUtil.KeyCode get(GameOptions options) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public InputUtil.Key getOption() {
-        return InputUtil.fromTranslationKey(this.keyBinding.getBoundKeyTranslationKey());
+    public InputUtil.KeyCode getOption() {
+        return InputUtil.fromName(this.keyBinding.getName());
     }
 
     @Override
-    public void setOption(InputUtil.Key value) {
-        this.keyBinding.setBoundKey(value);
+    public void setOption(InputUtil.KeyCode value) {
+        this.keyBinding.setKeyCode(value);
     }
 
     @Override
     protected void valueFromJson(JsonElement jsonElement) {
-        this.set(InputUtil.fromTranslationKey(jsonElement.getAsString()));
+        this.set(InputUtil.fromName(jsonElement.getAsString()));
     }
 
     @Override
     protected JsonElement valueToJson() {
-        return new JsonPrimitive(this.get().getTranslationKey());
+        return new JsonPrimitive(this.get().getName());
     }
 
     @Override
-    public @NotNull Text getName() {
-        return new TranslatableText(this.keyBinding.getTranslationKey());
+    public @NotNull String getName() {
+        return I18n.translate(this.keyBinding.getName());
     }
 
     @Override
-    public @NotNull Text getDisplayText() {
-        Text text = this.value.getLocalizedText();
+    public @NotNull String getDisplayText() {
+        String text = this.keyBinding.getLocalizedName();
         if (StandardSettings.config.isFocusedKeyBinding(this)) {
-            return new LiteralText("> ").append(text).append(" <").formatted(Formatting.YELLOW);
+            return Formatting.YELLOW + "> " + text + " <";
         } else {
             for (StandardSetting<?> setting : StandardSettings.config.standardSettings) {
                 if (setting != this && setting instanceof KeyBindingStandardSetting && setting.isEnabled() && this.value.equals(((KeyBindingStandardSetting) setting).value)) {
-                    return text.shallowCopy().formatted(Formatting.RED);
+                    return Formatting.RED + text;
                 }
             }
         }
@@ -91,9 +88,9 @@ public class KeyBindingStandardSetting extends StandardSetting<InputUtil.Key> {
     public @NotNull AbstractButtonWidget createMainWidget() {
         return new ButtonWidget(0, 0, 120, 20, this.getText(), button -> StandardSettings.config.setFocusedKeyBinding(this)) {
             @Override
-            public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            public void render(int mouseX, int mouseY, float delta) {
                 this.setMessage(KeyBindingStandardSetting.this.getText());
-                super.render(matrices, mouseX, mouseY, delta);
+                super.render(mouseX, mouseY, delta);
             }
         };
     }
