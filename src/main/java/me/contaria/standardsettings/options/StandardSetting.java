@@ -13,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mcsr.speedrunapi.config.api.SpeedrunOption;
 
-import java.util.List;
-
 public abstract class StandardSetting<T> implements SpeedrunOption<T> {
     private final String id;
     private final String category;
@@ -145,24 +143,6 @@ public abstract class StandardSetting<T> implements SpeedrunOption<T> {
     }
 
     protected static String getTextWithoutPrefix(String text, String prefix) {
-        if (!text.equals(prefix)) {
-            return text;
-        }
-        return text.substring(prefix.length());
-
-//        List<Text> prefixSiblings = prefix.getSiblings();
-//        List<Text> textSiblings = text.getSiblings();
-//
-//        if (prefixSiblings.size() >= textSiblings.size()) {
-//            return "";
-//        }
-//
-//        List<Text> restText = textSiblings.subList(prefixSiblings.size(), textSiblings.size());
-//
-//        MutableText newText = restText.remove(0).shallowCopy();
-//        for (Text t : restText) {
-//            newText.append(t);
-//        }
-//        return newText;
+        return text.replaceFirst(prefix.replace("(", "\\(").replace(")", "\\)"), "");
     }
 }
