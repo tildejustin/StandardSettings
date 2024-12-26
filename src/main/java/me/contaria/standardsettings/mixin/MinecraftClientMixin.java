@@ -8,21 +8,14 @@ import net.minecraft.client.gui.screen.LevelLoadingScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.storage.LevelStorage;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.function.Function;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -39,7 +32,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "startIntegratedServer", at = @At("HEAD"))
     private void reset(String worldName, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
-        if (!MinecraftClient.getInstance().isOnThread() || levelInfo != null) {
+        if (!MinecraftClient.getInstance().isOnThread() || levelInfo == null) {
             return;
         }
         StandardSettings.createCache();
@@ -50,7 +43,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "startIntegratedServer", at = @At("TAIL"))
     private void onWorldJoin(String worldName, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
-        if (!MinecraftClient.getInstance().isOnThread() || levelInfo != null) {
+        if (!MinecraftClient.getInstance().isOnThread() || levelInfo == null) {
             return;
         }
         StandardSettings.saveToWorldFile(worldName);
