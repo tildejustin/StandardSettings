@@ -59,7 +59,7 @@ public class StandardSettings {
 
     static {
         if (FabricLoader.getInstance().isModLoaded("sodium")) {
-            Class<?> sodiumClientMod;
+            Class<?> sodiumClientMod = null;
             try {
                 sodiumClientMod = Class.forName("me.jellysquid.mods.sodium.client.SodiumClientMod");
                 sodiumGameOptions = Class.forName("me.jellysquid.mods.sodium.client.gui.SodiumGameOptions");
@@ -68,13 +68,16 @@ public class StandardSettings {
                     sodiumClientMod = Class.forName("net.caffeinemc.mods.sodium.client.SodiumClientMod");
                     sodiumGameOptions = Class.forName("net.caffeinemc.mods.sodium.client.gui.SodiumGameOptions");
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException("Failed to locate SodiumClientMod or SodiumGameOptions classes", ex);
+                    LOGGER.error("Failed to locate SodiumClientMod or SodiumGameOptions classes, even though sodium is loaded");
                 }
             }
-            try {
-                sodiumClientMod$options = sodiumClientMod.getMethod("options");
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Failed to locate SodiumClientMod;options()V", e);
+
+            if (sodiumClientMod != null && sodiumGameOptions != null) {
+                try {
+                    sodiumClientMod$options = sodiumClientMod.getMethod("options");
+                } catch (NoSuchMethodException e) {
+                    LOGGER.error("Failed to locate SodiumClientMod;options()V");
+                }
             }
         }
     }
@@ -641,26 +644,26 @@ public class StandardSettings {
     }
 
     public static Optional<Boolean> getEntityCulling() {
-        if (entityCulling[0] == null || entityCulling[1] == null) return Optional.empty();
+        if (entityCulling[0] == null || entityCulling[1] == null || sodiumGameOptions == null || sodiumClientMod$options == null) return Optional.empty();
         try {
             return Optional.of((boolean) entityCulling[0].get(entityCulling[1].get(sodiumClientMod$options.invoke(null))));
         } catch (IllegalAccessException e) {
             LOGGER.error("Failed to get EntityCulling", e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("Failed to get Sodium options", e);
+            LOGGER.error("Failed to get Sodium options", e);
         }
         return Optional.empty();
     }
 
     public static void setEntityCulling(boolean value) {
-        if (entityCulling[0] == null || entityCulling[1] == null) return;
+        if (entityCulling[0] == null || entityCulling[1] == null || sodiumGameOptions == null || sodiumClientMod$options == null) return;
         Optional<Boolean> entityCullingTemp = getEntityCulling();
         try {
             entityCulling[0].set(entityCulling[1].get(sodiumClientMod$options.invoke(null)), value);
         } catch (IllegalAccessException e) {
             LOGGER.error("Failed to set EntityCulling to " + value, e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("Failed to get sodium options", e);
+            LOGGER.error("Failed to get sodium options", e);
         }
         entityCullingTemp.ifPresent(entityCullingBefore -> {
             if (entityCullingBefore != getEntityCulling().get()) {
