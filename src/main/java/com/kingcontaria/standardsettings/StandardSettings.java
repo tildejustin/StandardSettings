@@ -621,7 +621,7 @@ public class StandardSettings {
     }
 
     public static void initializeEntityCulling() {
-        if (!FabricLoader.getInstance().getModContainer("sodium").isPresent()) return;
+        if (sodiumGameOptions == null || sodiumClientMod$options == null) return;
         Class<?> entityCullingClass;
         label:
         {
@@ -644,7 +644,7 @@ public class StandardSettings {
     }
 
     public static Optional<Boolean> getEntityCulling() {
-        if (entityCulling[0] == null || entityCulling[1] == null || sodiumGameOptions == null || sodiumClientMod$options == null) return Optional.empty();
+        if (entityCulling[0] == null || entityCulling[1] == null) return Optional.empty();
         try {
             return Optional.of((boolean) entityCulling[0].get(entityCulling[1].get(sodiumClientMod$options.invoke(null))));
         } catch (IllegalAccessException e) {
@@ -656,7 +656,7 @@ public class StandardSettings {
     }
 
     public static void setEntityCulling(boolean value) {
-        if (entityCulling[0] == null || entityCulling[1] == null || sodiumGameOptions == null || sodiumClientMod$options == null) return;
+        if (entityCulling[0] == null || entityCulling[1] == null) return;
         Optional<Boolean> entityCullingTemp = getEntityCulling();
         try {
             entityCulling[0].set(entityCulling[1].get(sodiumClientMod$options.invoke(null)), value);
