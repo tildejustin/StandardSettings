@@ -1,7 +1,6 @@
 package com.kingcontaria.standardsettings;
 
 import com.google.common.io.Files;
-import com.kingcontaria.standardsettings.mixins.accessors.BakedModelManagerAccessor;
 import com.kingcontaria.standardsettings.mixins.accessors.MinecraftClientAccessor;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
@@ -14,8 +13,10 @@ import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.VideoMode;
 import net.minecraft.client.util.Window;
+import net.minecraft.resource.SimpleResourceReload;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Arm;
+import net.minecraft.util.Unit;
 import net.minecraft.util.math.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,15 +25,16 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Environment(value= EnvType.CLIENT)
 public class StandardSettings {
 
     public static final int[] version = new int[]{1,2,3, 0};
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final MinecraftClient client = MinecraftClient.getInstance();
-    public static final GameOptions options = client.options;
-    private static final Window window = client.getWindow();
+    public static MinecraftClient client;
+    public static GameOptions options;
+    private static Window window;
     public static final File standardoptionsFile = new File(FabricLoader.getInstance().getConfigDir().resolve("standardoptions.txt").toUri());
     public static boolean changeOnWindowActivation = false;
     public static boolean changeOnResize = false;
@@ -44,11 +46,27 @@ public class StandardSettings {
     private static Optional<Double> entityDistanceScalingOnWorldJoin = Optional.empty();
     private static Optional<Integer> fovOnWorldJoin = Optional.empty();
     private static Optional<Integer> guiScaleOnWorldJoin = Optional.empty();
-    public static OptionsCache optionsCache = new OptionsCache(client);
+    public static OptionsCache optionsCache;
     public static String lastWorld;
     public static String[] standardoptionsCache;
     public static Map<File, Long> filesLastModifiedMap;
     private static final Field[] entityCulling = new Field[2];
+
+    /**
+     * True only when loading standard settings during a reset.
+     * Used to override Minecraft's stateful clamping of some option values.
+     */
+    private static boolean resetting;
+
+    /**
+     * Initializes static fields that require the client and its options to be initialized already.
+     */
+    public static void initializeClientRefs() {
+        client = MinecraftClient.getInstance();
+        window = client.getWindow();
+        options = client.options;
+        optionsCache = new OptionsCache(client);
+    }
 
     public static void load() {
         long start = System.nanoTime();
@@ -170,16 +188,25 @@ public class StandardSettings {
                     case "particles" -> options.getParticles().setValue(ParticlesMode.byId(Integer.parseInt(strings[1])));
                     case "maxFps" -> options.getMaxFps().setValue(Integer.parseInt(strings[1]));
                     case "graphicsMode" -> options.getGraphicsMode().setValue(GraphicsMode.byId(Integer.parseInt(strings[1])));
-                    case "ao" -> options.getAo().setValue(AoMode.byId(Integer.parseInt(strings[1])));
-                    case "renderClouds" -> options.getCloudRenderMod().setValue(strings[1].equals("\"true\"") ? CloudRenderMode.FANCY : strings[1].equals("\"false\"") ? CloudRenderMode.OFF : CloudRenderMode.FAST);
+                    case "ao" -> options.getAo().setValue(Boolean.parseBoolean(strings[1]));
+                    case "renderClouds" -> options.getCloudRenderMode().setValue(strings[1].equals("\"true\"") ? CloudRenderMode.FANCY : strings[1].equals("\"false\"") ? CloudRenderMode.OFF : CloudRenderMode.FAST);
                     case "attackIndicator" -> options.getAttackIndicator().setValue(AttackIndicator.byId(Integer.parseInt(strings[1])));
                     case "lang" -> {
-                        client.getLanguageManager().setLanguage(client.getLanguageManager().getLanguage(strings[1]));
-                        client.getLanguageManager().reload(client.getResourceManager());
-                        options.language = client.getLanguageManager().getLanguage().getCode();
+                        final var languages = client.getLanguageManager().getAllLanguages();
+                        final var languageCode = strings[1];
+                        // reloading languages is slow in 1.20+, so skip it if unnecessary
+                        if (!Objects.equals(client.getLanguageManager().getLanguage(), languageCode)) {
+                            if (languages.containsKey(languageCode)) {
+                                client.getLanguageManager().setLanguage(languageCode);
+                                client.getLanguageManager().reload(client.getResourceManager());
+                                options.language = languageCode;
+                            } else {
+                                LOGGER.warn("No language found for language code '{}', ignoring", languageCode);
+                            }
+                        }
                     }
                     case "chatVisibility" -> options.getChatVisibility().setValue(ChatVisibility.byId(Integer.parseInt(strings[1])));
-                    case "chatOpacity" -> options.getChtOpacity().setValue(Double.parseDouble(strings[1]));
+                    case "chatOpacity" -> options.getChatOpacity().setValue(Double.parseDouble(strings[1]));
                     case "chatLineSpacing" -> options.getChatLineSpacing().setValue(Double.parseDouble(strings[1]));
                     case "textBackgroundOpacity" -> options.getTextBackgroundOpacity().setValue(Double.parseDouble(strings[1]));
                     case "backgroundForChatOnly" -> options.getBackgroundForChatOnly().setValue(Boolean.parseBoolean(strings[1]));
@@ -200,7 +227,7 @@ public class StandardSettings {
                         if (options.getMipmapLevels().getValue() != Integer.parseInt(strings[1])) {
                             options.getMipmapLevels().setValue(Integer.parseInt(strings[1]));
                             client.setMipmapLevels(options.getMipmapLevels().getValue());
-                            ((BakedModelManagerAccessor)client.getBakedModelManager()).callApply(((BakedModelManagerAccessor)client.getBakedModelManager()).callPrepare(client.getResourceManager(), client.getProfiler()), client.getResourceManager(), client.getProfiler());
+                            StandardSettings.reloadBakedModelManager();
                         }
                     }
                     case "mainHand" -> options.getMainArm().setValue("\"left\"".equalsIgnoreCase(strings[1]) ? Arm.LEFT : Arm.RIGHT);
@@ -223,7 +250,7 @@ public class StandardSettings {
                     case "soundCategory" -> {
                         for (SoundCategory soundCategory : SoundCategory.values()) {
                             if (string0_split[1].equals(soundCategory.getName())) {
-                                options.setSoundVolume(soundCategory, Float.parseFloat(strings[1])); break;
+                                options.getSoundVolumeOption(soundCategory).setValue(Double.parseDouble(strings[1])); break;
                             }
                         }
                     }
@@ -327,7 +354,7 @@ public class StandardSettings {
         options.getGuiScale().setValue(check("GUI Scale", options.getGuiScale().getValue(), 0, Integer.MAX_VALUE));
         options.getMaxFps().setValue(check("Max Framerate", options.getMaxFps().getValue(), 1, 260));
         options.getBiomeBlendRadius().setValue(check("Biome Blend", options.getBiomeBlendRadius().getValue(), 0, 7));
-        options.getChtOpacity().setValue(check("Chat Text Opacity", options.getChtOpacity().getValue(), 0, 1, true));
+        options.getChatOpacity().setValue(check("Chat Text Opacity", options.getChatOpacity().getValue(), 0, 1, true));
         options.getChatLineSpacing().setValue(check("Line Spacing", options.getChatLineSpacing().getValue(), 0, 1, true));
         options.getTextBackgroundOpacity().setValue(check("Text Background Opacity", options.getTextBackgroundOpacity().getValue(), 0, 1, true));
         options.getChatHeightFocused().setValue(check("(Chat) Focused Height", options.getChatHeightFocused().getValue(), 0, 1, false));
@@ -338,11 +365,11 @@ public class StandardSettings {
         if (options.getMipmapLevels().getValue() < 0 || options.getMipmapLevels().getValue() > 4) {
             options.getMipmapLevels().setValue(check("Mipmap Levels", options.getMipmapLevels().getValue(), 0, 4));
             client.setMipmapLevels(options.getMipmapLevels().getValue());
-            ((BakedModelManagerAccessor)client.getBakedModelManager()).callApply(((BakedModelManagerAccessor)client.getBakedModelManager()).callPrepare(client.getResourceManager(), client.getProfiler()), client.getResourceManager(), client.getProfiler());
+            StandardSettings.reloadBakedModelManager();
         }
         options.getMouseWheelSensitivity().setValue(check("Scroll Sensitivity", options.getMouseWheelSensitivity().getValue(), 0.01, 10, false));
         for (SoundCategory soundCategory : SoundCategory.values()) {
-            options.setSoundVolume(soundCategory, check("(Music & Sounds) " + SoundCategoryName.valueOf(soundCategory.name()).assignedName, options.getSoundVolume(soundCategory), 0, 1, true));
+            options.getSoundVolumeOption(soundCategory).setValue(check("(Music & Sounds) " + SoundCategoryName.valueOf(soundCategory.name()).assignedName, options.getSoundVolume(soundCategory), 0, 1, true));
         }
 
         if (renderDistanceOnWorldJoin.isPresent()) {
@@ -385,7 +412,7 @@ public class StandardSettings {
         return setting;
     }
 
-    private static float check(String settingName, float setting, float min, float max, boolean percent) {
+    private static double check(String settingName, float setting, float min, float max, boolean percent) {
         if (setting < min) {
             LOGGER.warn(settingName + " was too low! ({})", percent ? asPercent(setting) : setting);
             return min;
@@ -411,6 +438,14 @@ public class StandardSettings {
 
     private static String asPercent(double value) {
         return value * 100 == (int) (value * 100) ? (int) (value * 100) + "%" : value * 100 + "%";
+    }
+
+    public static void setResetting(boolean resetting) {
+        StandardSettings.resetting = resetting;
+    }
+
+    public static boolean isResetting() {
+        return resetting;
     }
 
     private enum SoundCategoryName {
@@ -466,12 +501,12 @@ public class StandardSettings {
                 "particles:" + options.getParticles().getValue().getId() + l +
                 "maxFps:" + options.getMaxFps().getValue() + l +
                 "graphicsMode:" + options.getGraphicsMode().getValue().getId() + l +
-                "ao:" + options.getAo().getValue().getId() + l +
-                "renderClouds:\"" + (options.getCloudRenderMod().getValue() == CloudRenderMode.FAST ? "fast" : options.getCloudRenderMod().getValue() == CloudRenderMode.FANCY) + "\"" + l +
+                "ao:" + options.getAo().getValue() + l +
+                "renderClouds:\"" + (options.getCloudRenderMode().getValue() == CloudRenderMode.FAST ? "fast" : options.getCloudRenderMode().getValue() == CloudRenderMode.FANCY) + "\"" + l +
                 "attackIndicator:" + options.getAttackIndicator().getValue().getId() + l +
                 "lang:" + options.language + l +
                 "chatVisibility:" + options.getChatVisibility().getValue().getId() + l +
-                "chatOpacity:" + options.getChtOpacity().getValue() + l +
+                "chatOpacity:" + options.getChatOpacity().getValue() + l +
                 "chatLineSpacing:" + options.getChatLineSpacing().getValue() + l +
                 "textBackgroundOpacity:" + options.getTextBackgroundOpacity().getValue() + l +
                 "backgroundForChatOnly:" + options.getBackgroundForChatOnly().getValue() + l +
@@ -618,5 +653,16 @@ public class StandardSettings {
 
     public static String getVersion() {
         return String.join(".", Arrays.stream(version).mapToObj(String::valueOf).toArray(String[]::new));
+    }
+
+    static void reloadBakedModelManager() {
+        SimpleResourceReload.start(
+                client.getResourceManager(),
+                List.of(client.getBakedModelManager()),
+                Runnable::run,
+                Runnable::run,
+                CompletableFuture.completedFuture(Unit.INSTANCE),
+                false
+        ).whenComplete().join();
     }
 }
